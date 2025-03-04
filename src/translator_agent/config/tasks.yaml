@@ -1,0 +1,85 @@
+initial_analysis_task:
+  description: >
+    Analyze the source document in {source_language} about {topic}.
+    Identify document structure, specialized terminology, cultural references,
+    and create a chunking strategy for efficient translation.
+    Consider that the document will be translated into {target_language}.
+  expected_output: >
+    A comprehensive analysis with: 1) Document structure map, 2) Terminology glossary,
+    3) Cultural reference points, 4) Chunking strategy with dependencies,
+    5) Potential translation challenges identified.
+  agent: coordinator
+
+context_preparation_task:
+  description: >
+    Based on the document analysis, create a context repository for {topic} 
+    that bridges {source_language} and {target_language} cultural understanding.
+    Include specialized terminology equivalents and cultural adaptations needed.
+  expected_output: >
+    A context repository containing: 1) Bilingual terminology glossary, 
+    2) Cultural reference mappings, 3) Style and tone guidelines for target audience,
+    4) Domain-specific knowledge relevant to {topic}.
+  agent: context_expert
+  context_from_tasks: [initial_analysis_task]
+
+translation_task:
+  description: >
+    Translate the document chunks from {source_language} to {target_language},
+    maintaining consistent terminology, tone, and meaning throughout.
+    Refer to the context repository for specialized terms and cultural references.
+    Flag any segments requiring special attention.
+  expected_output: >
+    Translated document chunks with: 1) Source-target text mapping, 2) Notes on
+    challenging translations, 3) Consistency markers for terminology,
+    4) Metadata for reassembly.
+  agent: linguist
+  context_from_tasks: [initial_analysis_task, context_preparation_task]
+
+technical_review_task:
+  description: >
+    Review the translated chunks focusing on specialized terminology in {topic}.
+    Ensure technical accuracy and consistent use of domain-specific language
+    between {source_language} and {target_language}.
+  expected_output: >
+    Technical review report with: 1) Terminology consistency verification,
+    2) Technical accuracy assessment, 3) Suggested improvements for
+    specialized content, 4) Updated terminology glossary.
+  agent: technical_specialist
+  context_from_tasks: [context_preparation_task, translation_task]
+
+editing_task:
+  description: >
+    Refine the translated text to ensure it reads naturally in {target_language}
+    while preserving the original meaning, tone, and style. Address any
+    issues flagged during translation or technical review.
+  expected_output: >
+    Edited translation with: 1) Improved fluency and readability,
+    2) Consistent style throughout document, 3) Resolution of flagged issues,
+    4) Natural expression in target language.
+  agent: editor
+  context_from_tasks: [translation_task, technical_review_task]
+
+cultural_adaptation_task:
+  description: >
+    Review the edited translation for cultural appropriateness in {target_language}.
+    Adapt cultural references, idioms, and context-specific content to resonate
+    with the target audience while maintaining the original intent.
+  expected_output: >
+    Cultural adaptation report with: 1) Culturally adapted references,
+    2) Modified idioms and expressions, 3) Contextual adjustments for
+    target audience, 4) Preservation of original meaning.
+  agent: cultural_consultant
+  context_from_tasks: [context_preparation_task, editing_task]
+
+final_assembly_task:
+  description: >
+    Integrate all translated and reviewed chunks into a cohesive final document.
+    Ensure consistency across sections, resolve any remaining issues,
+    and verify the document maintains its original structure and flow.
+  expected_output: >
+    A complete, polished translation from {source_language} to {target_language}
+    that reads naturally, maintains technical accuracy, and is culturally
+    appropriate for the target audience. Formatted as requested without markdown
+    indicators.
+  agent: coordinator
+  context_from_tasks: [initial_analysis_task, editing_task, cultural_adaptation_task]
